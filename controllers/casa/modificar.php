@@ -77,7 +77,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     exit;
 }
 
-// Si no hay solicitud GET o POST válida
 echo json_encode([
     'codigo' => 0,
     'mensaje' => "Solicitud no válida"

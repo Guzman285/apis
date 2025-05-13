@@ -5,13 +5,9 @@ abstract class Conexion {
 
     static function conectar() : PDO{
         try{
-            // Intentamos conectar a la base de datos Informix
             self::$conexion = new PDO("informix:host=host.docker.internal; service=9088; database=farmaceutica; server=informix; protocol=onsoctcp;EnableScrollableCursors=1","informix","in4mix");
             self::$conexion->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-            // Eliminamos el echo para no interferir con las respuestas JSON
-            // echo "CONEXION EXITOSA";
         }catch (PDOException $e){
-            // Guardamos el error en el log en lugar de mostrarlo
             error_log("Error de conexión a la BD: " . $e->getMessage());
             self::$conexion = null;
             throw new Exception("Error de conexión a la base de datos");

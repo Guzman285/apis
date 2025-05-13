@@ -1,32 +1,19 @@
-
-/**
- * covid19-api.js - Integración de la API de COVID-19 
- * Este archivo implementa la funcionalidad para mostrar estadísticas 
- * de COVID-19 relevantes para farmaceuticos.
- */
-
-// Contenedor principal para el dashboard de COVID-19
 let covidContainer;
 
-// Inicializar el módulo de COVID-19
 const initCovidModule = () => {
-    // Crear el contenedor para el dashboard si no existe
     if (!document.getElementById('covid-dashboard-container')) {
         covidContainer = document.createElement('div');
         covidContainer.id = 'covid-dashboard-container';
         covidContainer.className = 'container border bg-light shadow rounded p-4 mb-4';
-        
-        // Título de la sección
+
         const title = document.createElement('h2');
         title.className = 'text-center mb-3';
         title.textContent = 'Dashboard COVID-19 para Farmacéuticos';
         
-        // Descripción
         const description = document.createElement('p');
         description.className = 'text-center mb-4';
         description.textContent = 'Información actualizada sobre COVID-19 relevante para su farmacia.';
-        
-        // Selector de país
+
         const countrySelector = document.createElement('div');
         countrySelector.className = 'row justify-content-center mb-4';
         countrySelector.innerHTML = `
@@ -49,13 +36,11 @@ const initCovidModule = () => {
             </div>
         `;
         
-        // Panel de estadísticas principales
         const statsPanel = document.createElement('div');
         statsPanel.id = 'covid-stats-panel';
         statsPanel.className = 'row mb-4';
         statsPanel.innerHTML = '<div class="col-12 text-center"><div class="spinner-border text-primary" role="status"><span class="visually-hidden">Cargando...</span></div></div>';
-        
-        // Gráficos
+
         const chartsPanel = document.createElement('div');
         chartsPanel.id = 'covid-charts-panel';
         chartsPanel.className = 'row mb-3';
@@ -81,8 +66,7 @@ const initCovidModule = () => {
                 </div>
             </div>
         `;
-        
-        // Recomendaciones para farmacéuticos
+
         const recommendationsPanel = document.createElement('div');
         recommendationsPanel.className = 'card mt-3';
         recommendationsPanel.innerHTML = `
@@ -115,7 +99,6 @@ const initCovidModule = () => {
             </div>
         `;
         
-        // Ensamblar la estructura del contenedor
         covidContainer.appendChild(title);
         covidContainer.appendChild(description);
         covidContainer.appendChild(countrySelector);
@@ -123,34 +106,25 @@ const initCovidModule = () => {
         covidContainer.appendChild(chartsPanel);
         covidContainer.appendChild(recommendationsPanel);
         
-        // Insertar el contenedor en el DOM
-        // Lo colocamos al principio de la página para mayor visibilidad
         const mainContainer = document.querySelector('.container');
         if (mainContainer) {
             mainContainer.parentNode.insertBefore(covidContainer, mainContainer);
         } else {
             document.body.prepend(covidContainer);
         }
-        
-        // Agregar listener al botón de actualizar
+
         document.getElementById('covid-fetch-btn').addEventListener('click', fetchCovidData);
-        
-        // Cargar datos iniciales
+
         fetchCovidData();
     }
 };
 
-// Función para obtener datos de COVID-19
 const fetchCovidData = async () => {
     try {
-        // Mostrar spinner mientras carga
         document.getElementById('covid-stats-panel').innerHTML = '<div class="col-12 text-center"><div class="spinner-border text-primary" role="status"><span class="visually-hidden">Cargando...</span></div></div>';
-        
-        // Obtener el país seleccionado
+
         const countrySelector = document.getElementById('covid-country-select');
         const selectedCountry = countrySelector ? countrySelector.value : 'guatemala';
-        
-        // Mapeo de los valores del select a los códigos de país de la API
         const countryMap = {
             'guatemala': 'guatemala',
             'mexico': 'mexico',
@@ -162,9 +136,7 @@ const fetchCovidData = async () => {
         };
         
         const countryCode = countryMap[selectedCountry] || 'guatemala';
-        
-        // Como usamos una API simulada, obtenemos datos generales
-        // En un caso real, utilizaríamos la API de Covid19
+
         let responseUrl = 'https://jsonplaceholder.typicode.com/users';
         if (countryCode === 'all') {
             responseUrl = 'https://jsonplaceholder.typicode.com/users';
@@ -175,17 +147,10 @@ const fetchCovidData = async () => {
         const response = await fetch(responseUrl);
         const data = await response.json();
         
-        // Transformar los datos para simular estadísticas COVID
-        // En un caso real, usaríamos los datos reales de la API
         const transformedData = transformCovidData(data, countryCode);
         
-        // Actualizar el panel de estadísticas
         updateStatsPanel(transformedData);
-        
-        // Actualizar los gráficos
         updateCharts(transformedData);
-        
-        // Actualizar recomendaciones basadas en los datos
         updateRecommendations(transformedData);
         
     } catch (error) {
@@ -200,30 +165,17 @@ const fetchCovidData = async () => {
     }
 };
 
-// Transformar datos para simular estadísticas COVID
 const transformCovidData = (data, countryCode) => {
-    // Generamos datos aleatorios basados en el tamaño del conjunto de datos
     const baseMultiplier = data.length * (Math.floor(Math.random() * 100) + 1);
-    
-    // Número aleatorio entre 50 y 5000 para casos confirmados
     const confirmedCases = (baseMultiplier * 1000) + Math.floor(Math.random() * 4950) + 50;
-    
-    // Número aleatorio entre 1 y 100 para casos activos (porcentaje)
     const activePercentage = Math.floor(Math.random() * 20) + 1;
     const activeCases = Math.floor(confirmedCases * (activePercentage / 100));
-    
-    // Número aleatorio entre 0.5 y 5 para tasa de letalidad (porcentaje)
     const fatalityRate = (Math.floor(Math.random() * 45) + 5) / 10;
     const deaths = Math.floor(confirmedCases * (fatalityRate / 100));
-    
-    // Número aleatorio entre 70 y 99 para tasa de recuperación (porcentaje)
     const recoveryRate = Math.floor(Math.random() * 29) + 70;
     const recovered = Math.floor(confirmedCases * (recoveryRate / 100));
-    
-    // Tasas de vacunación
-    const vaccinationRate = Math.floor(Math.random() * 60) + 40;
-    
-    // Generar datos para el gráfico de casos
+        const vaccinationRate = Math.floor(Math.random() * 60) + 40;
+
     const casesLast14Days = [];
     for (let i = 0; i < 14; i++) {
         casesLast14Days.push({
@@ -233,8 +185,7 @@ const transformCovidData = (data, countryCode) => {
             deaths: Math.floor(Math.random() * 50)
         });
     }
-    
-    // Generar datos para el gráfico de productos
+
     const productDistribution = [
         { name: 'Pruebas', percentage: Math.floor(Math.random() * 30) + 20 },
         { name: 'Mascarillas', percentage: Math.floor(Math.random() * 25) + 15 },
@@ -244,7 +195,6 @@ const transformCovidData = (data, countryCode) => {
         { name: 'Otros', percentage: Math.floor(Math.random() * 10) + 5 }
     ];
     
-    // Ajustar para que sumen 100%
     const sum = productDistribution.reduce((acc, product) => acc + product.percentage, 0);
     if (sum !== 100) {
         productDistribution[productDistribution.length - 1].percentage += (100 - sum);
@@ -265,7 +215,6 @@ const transformCovidData = (data, countryCode) => {
     };
 };
 
-// Actualizar el panel de estadísticas
 const updateStatsPanel = (data) => {
     const statsPanel = document.getElementById('covid-stats-panel');
     
@@ -357,18 +306,13 @@ const updateStatsPanel = (data) => {
     `;
 };
 
-// Actualizar los gráficos
 const updateCharts = (data) => {
-    // Verificar si Chart.js está disponible
     if (typeof Chart === 'undefined') {
         console.warn('Chart.js no está disponible. Los gráficos no se mostrarán.');
         return;
     }
-    
-    // Gráfico de casos
     const casesCanvas = document.getElementById('covid-cases-chart');
     if (casesCanvas) {
-        // Destruir gráfico anterior si existe
         if (window.casesChart) {
             window.casesChart.destroy();
         }
@@ -421,10 +365,8 @@ const updateCharts = (data) => {
         });
     }
     
-    // Gráfico de productos
     const productsCanvas = document.getElementById('covid-products-chart');
     if (productsCanvas) {
-        // Destruir gráfico anterior si existe
         if (window.productsChart) {
             window.productsChart.destroy();
         }
@@ -466,18 +408,10 @@ const updateCharts = (data) => {
     }
 };
 
-// Actualizar recomendaciones basadas en los datos
 const updateRecommendations = (data) => {
-    // Para esta demo, simplemente actualizamos con recomendaciones genéricas
-    // En un caso real, podríamos personalizar las recomendaciones basadas en los datos
-    
-    // Productos recomendados basados en la distribución
     const productsList = document.getElementById('covid-products-list');
     if (productsList) {
-        // Ordenar productos por porcentaje (de mayor a menor)
         const sortedProducts = [...data.productDistribution].sort((a, b) => b.percentage - a.percentage);
-        
-        // Generar recomendaciones basadas en los productos más demandados
         let productsHtml = '';
         sortedProducts.forEach((product, index) => {
             if (index < 5) { // Mostrar solo los 5 más importantes
@@ -485,8 +419,6 @@ const updateRecommendations = (data) => {
                 productsHtml += `<li${emphasis}>${product.name} (${product.percentage}% de demanda)</li>`;
             }
         });
-        
-        // Agregar recomendaciones adicionales
         productsHtml += '<li>Vitaminas y suplementos respiratorios</li>';
         
         if (data.fatalityRate > 3) {
@@ -495,17 +427,14 @@ const updateRecommendations = (data) => {
         
         productsList.innerHTML = productsHtml;
     }
-    
-    // Actualizar protocolos basados en las estadísticas
+
     const protocolsList = document.getElementById('covid-protocols-list');
     if (protocolsList) {
         let protocolsHtml = '';
         
-        // Recomendaciones básicas
         protocolsHtml += '<li>Mantener ventilación adecuada en la farmacia</li>';
         protocolsHtml += '<li>Usar barreras físicas en el área de atención</li>';
         
-        // Recomendaciones basadas en casos activos
         if (data.active > 1000) {
             protocolsHtml += '<li class="text-danger fw-bold">Implementar medidas estrictas de distanciamiento</li>';
             protocolsHtml += '<li>Ofrecer servicio a domicilio sin costo adicional para pacientes de riesgo</li>';
@@ -513,25 +442,21 @@ const updateRecommendations = (data) => {
             protocolsHtml += '<li>Mantener medidas de distanciamiento básicas</li>';
             protocolsHtml += '<li>Ofrecer servicio a domicilio para pacientes de riesgo</li>';
         }
-        
-        // Recomendaciones basadas en vacunación
+    
         if (data.vaccinationRate < 50) {
             protocolsHtml += '<li class="text-danger">Priorizar información sobre centros de vacunación cercanos</li>';
         } else {
             protocolsHtml += '<li>Proporcionar información actualizada sobre refuerzos de vacunas</li>';
         }
-        
-        // Recomendaciones generales
+    
         protocolsHtml += '<li>Verificar stock de medicamentos para tratamiento sintomático</li>';
         
         protocolsList.innerHTML = protocolsHtml;
     }
 };
 
-// Iniciar el módulo cuando el DOM esté listo
 document.addEventListener('DOMContentLoaded', initCovidModule);
 
-// Exponer funciones públicas
 window.covidAPI = {
     refresh: fetchCovidData,
     toggleDashboard: () => {
